@@ -16,10 +16,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Setup Java 17
@@ -29,12 +29,12 @@ jobs:
           distribution: 'temurin'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install --legacy-peer-deps
 
       - name: Install Expo CLI
         run: npm install -g @expo/cli
 
-      - name: Prebuild Android native project
+      - name: Generate Android native project
         run: npx expo prebuild --platform android --no-install
         env:
           EXPO_NO_DOTENV: 1
@@ -42,22 +42,18 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x android/gradlew
 
-      - name: Build Debug APK (no signing needed)
+      - name: Build Debug APK
         working-directory: android
-        run: ./gradlew assembleDebug --no-daemon
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
         env:
           GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx3g"
 
-      - name: Locate and rename APK
-        run: |
-          mkdir -p output
-          find android -name "*.apk" | head -5
-          cp android/app/build/outputs/apk/debug/app-debug.apk output/مزرعتي.apk 2>/dev/null || \
-          cp android/app/build/outputs/apk/debug/app-debug.apk output/poultry-app.apk
+      - name: Find APK
+        run: find android -name "*.apk" -type f
 
-      - name: Upload APK artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: poultry-app-apk
-          path: output/
+          path: android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
