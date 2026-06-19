@@ -1,0 +1,63 @@
+name: Build Android APK
+
+on:
+  push:
+    branches:
+      - main
+      - claude/app-mock-data-ux-21wszn
+  workflow_dispatch:
+
+jobs:
+  build-android:
+    name: Build APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Expo CLI
+        run: npm install -g @expo/cli
+
+      - name: Prebuild Android native project
+        run: npx expo prebuild --platform android --no-install
+        env:
+          EXPO_NO_DOTENV: 1
+
+      - name: Make gradlew executable
+        run: chmod +x android/gradlew
+
+      - name: Build Debug APK (no signing needed)
+        working-directory: android
+        run: ./gradlew assembleDebug --no-daemon
+        env:
+          GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx3g"
+
+      - name: Locate and rename APK
+        run: |
+          mkdir -p output
+          find android -name "*.apk" | head -5
+          cp android/app/build/outputs/apk/debug/app-debug.apk output/مزرعتي.apk 2>/dev/null || \
+          cp android/app/build/outputs/apk/debug/app-debug.apk output/poultry-app.apk
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: poultry-app-apk
+          path: output/
+          retention-days: 30
