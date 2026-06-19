@@ -234,7 +234,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
             );
           }).toList(),
         ),
-        duration: const Duration(milliseconds: 600),
+        swapAnimationDuration: const Duration(milliseconds: 600),
       ),
     ).animate().fadeIn(delay: 400.ms);
   }
@@ -347,7 +347,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 centerSpaceRadius: 36,
                 sectionsSpace: 3,
               ),
-              duration: const Duration(milliseconds: 600),
+              swapAnimationDuration: const Duration(milliseconds: 600),
             ),
           ),
           const SizedBox(width: 16),

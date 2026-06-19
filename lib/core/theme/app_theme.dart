@@ -15,7 +15,7 @@ class AppTheme {
       ),
       scaffoldBackgroundColor: AppColors.background,
       textTheme: _buildTextTheme(),
-      cardTheme: CardThemeData(
+      cardTheme: CardTheme(
         elevation: 3,
         shadowColor: Colors.black.withOpacity(0.08),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),

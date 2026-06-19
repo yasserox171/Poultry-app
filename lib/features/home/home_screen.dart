@@ -294,15 +294,15 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             ),
             child: Row(
               children: [
-                Icon(e['icon'] as IconData, color: e['color'] as Color, size: 22),
+                Icon(e.value['icon'] as IconData, color: e.value['color'] as Color, size: 22),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(e['text'] as String,
+                      Text(e.value['text'] as String,
                           style: GoogleFonts.cairo(fontSize: 13, color: AppColors.textPrimary)),
-                      Text(e['time'] as String,
+                      Text(e.value['time'] as String,
                           style: GoogleFonts.cairo(fontSize: 11, color: AppColors.textHint)),
                     ],
                   ),

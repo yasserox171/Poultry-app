@@ -7,7 +7,6 @@ import '../../features/monitor/monitor_screen.dart';
 import '../../features/community/community_screen.dart';
 import '../../features/reports/reports_screen.dart';
 import '../../features/market/market_screen.dart';
-import '../../features/profile/profile_screen.dart';
 
 class MainScaffold extends StatefulWidget {
   const MainScaffold({super.key});
