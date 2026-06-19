@@ -1,0 +1,63 @@
+name: Build Flutter APK
+
+on:
+  push:
+    branches:
+      - 'claude/flutter-app-filters-apk-4cb1dl'
+      - 'main'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Flutter 3.24.x
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.5'
+          channel: 'stable'
+          cache: true
+
+      - name: Verify Flutter installation
+        run: flutter --version
+
+      - name: Create Flutter Android project structure
+        run: |
+          flutter create \
+            --platforms=android \
+            --project-name=poultry_app \
+            --org=com.yasserox171 \
+            --no-pub \
+            .
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze code
+        run: flutter analyze --no-fatal-infos
+        continue-on-error: true
+
+      - name: Build release APK
+        run: flutter build apk --release --no-tree-shake-icons
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: poultry-app-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 30
+
+      - name: Show APK info
+        run: |
+          echo "✅ APK built successfully!"
+          ls -lh build/app/outputs/flutter-apk/app-release.apk
